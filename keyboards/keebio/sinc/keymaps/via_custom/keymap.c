@@ -1,15 +1,15 @@
 #include QMK_KEYBOARD_H
-//#include "raw_hid.h"
-#include "print.h"
+#include "raw_hid.h"
+//#include "print.h"
 
-//#define JM_NOTIFY_DATA_LEN 8
+#define JM_NOTIFY_DATA_LEN 8
 
-//const uint8_t PROGMEM layer0_notify_data[8] = {
-//	'J', 'M', 'L', '0', 0, 0, 0, 0
-//};
-//const uint8_t PROGMEM layer1_notify_data[8] = {
-//	'J', 'M', 'L', '1', 0, 0, 0, 0
-//};
+const uint8_t PROGMEM layer0_notify_data[8] = {
+	'J', 'M', 'L', '0', 0, 0, 0, 0
+};
+const uint8_t PROGMEM layer1_notify_data[8] = {
+	'J', 'M', 'L', '1', 0, 0, 0, 0
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_80_with_macro(
@@ -39,38 +39,58 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         }
     } else if (index == 0) {
         if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
             tap_code(KC_VOLD);
+        } else {
+            tap_code(KC_VOLU);
         }
     }
     return true;
 }
 
-//void raw_hid_receive(uint8_t *data, uint8_t length) {
-//	if (length == 4) {
-//		if (data[0] == 'J' && data[1] == 'M') {
-//			if (data[2] == 'L' && data[3] == 'R') {
-//				if (IS_LAYER_ON(0)) {
-//					raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
-//				}
-//				else {
-//					raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
-//				}
-//			}
-//		}
-//	}
-//}
+void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
+	if (length >= 5 && data[0] == 2) {
+		if (data[1] == 'J' && data[2] == 'M') {
+			if (data[3] == 'L') {
+                if (data[4] == 'R') {
+                    if (IS_LAYER_ON(1)) {
+                        data[4] = 0xF - 1;
+                    }
+                    else {
+                        data[4] = 0xF;
+                    }
+                }
+                else if (data[4] == 'S')
+                {
+                    if (data[5] == '0')
+                    {
+                        layer_off(1);
+                    }
+                    else if (data[5] == '1')
+                    {
+                        layer_on(1);
+                    }
+                }
+			}
+		}
+	}
+
+    //print("received kb handler: ");
+    //for(int i = 0; i < length; i++)
+    //{
+        //uprintf("%u", data[i]);
+    //}
+    //print("\n");
+}
 
 uint32_t layer_state_set_user(uint32_t state) {
 	switch (biton32(state)) {
 		case 0:
-//			raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
-			print("JML0");
+			raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
+			//print("JML0");
 			break;
 		case 1:
-			print("JML1");
-//			raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
+			//print("JML1");
+			raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
 			break;
 	}
 
