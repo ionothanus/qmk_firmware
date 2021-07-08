@@ -1,14 +1,20 @@
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
-//#include "print.h"
+// #include "print.h"
 
-#define JM_NOTIFY_DATA_LEN 8
+#define JM_NOTIFY_DATA_LEN 32
 
-const uint8_t PROGMEM layer0_notify_data[8] = {
-	'J', 'M', 'L', '0', 0, 0, 0, 0
+const uint8_t layer0_notify_data[32] = {
+	2, 'J', 'M', 'L', '0', 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
 };
-const uint8_t PROGMEM layer1_notify_data[8] = {
-	'J', 'M', 'L', '1', 0, 0, 0, 0
+const uint8_t layer1_notify_data[32] = {
+	2, 'J', 'M', 'L', '1', 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -74,22 +80,23 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
 		}
 	}
 
-    //print("received kb handler: ");
-    //for(int i = 0; i < length; i++)
-    //{
-        //uprintf("%u", data[i]);
-    //}
-    //print("\n");
+    // print("received kb handler: ");
+    // for(int i = 0; i < length; i++)
+    // {
+    //     uprintf("%u", data[i]);
+    // }
+    // uprintf("--bytes: %u", length);
+    // print("\n");
 }
 
 uint32_t layer_state_set_user(uint32_t state) {
 	switch (biton32(state)) {
 		case 0:
 			raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
-			//print("JML0");
+			// print("JML0");
 			break;
 		case 1:
-			//print("JML1");
+			// print("JML1");
 			raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
 			break;
 	}
