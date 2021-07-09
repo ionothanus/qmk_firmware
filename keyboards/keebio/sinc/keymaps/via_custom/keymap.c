@@ -1,6 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
-// #include "print.h"
+//#include "print.h"
 
 #define JM_NOTIFY_DATA_LEN 32
 
@@ -16,6 +16,8 @@ const uint8_t layer1_notify_data[32] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
 };
+
+bool disable_macro_key = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_80_with_macro(
@@ -76,6 +78,16 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
                         layer_on(1);
                     }
                 }
+                else if (data[4] == 'D')
+                {
+                    data[5] = 'S';
+                    disable_macro_key = true;
+                }
+                else if (data[4] == 'E')
+                {
+                    data[5] = 'S';
+                    disable_macro_key = false;
+                }
 			}
 		}
 	}
@@ -83,23 +95,42 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
     // print("received kb handler: ");
     // for(int i = 0; i < length; i++)
     // {
-    //     uprintf("%u", data[i]);
+    //     uprintf("%c", data[i]);
     // }
     // uprintf("--bytes: %u", length);
     // print("\n");
 }
 
+// used to disable the macro key by request
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case TG(1):
+      if (disable_macro_key)
+      {
+          //print("ignoring macro key\n");
+          return false;
+      }
+      else
+      {
+          //print("not ignoring macro key\n");
+          return true;
+      }
+    default:
+      return true; // Process all other keycodes normally
+  }
+}
+
 uint32_t layer_state_set_user(uint32_t state) {
-	switch (biton32(state)) {
-		case 0:
-			raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
-			// print("JML0");
-			break;
-		case 1:
-			// print("JML1");
-			raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
-			break;
-	}
+    switch (biton32(state)) {
+        case 0:
+            raw_hid_send((uint8_t*)layer0_notify_data, JM_NOTIFY_DATA_LEN);
+            // print("JML0");
+            break;
+        case 1:
+            // print("JML1");
+            raw_hid_send((uint8_t*)layer1_notify_data, JM_NOTIFY_DATA_LEN);
+            break;
+    }
 
 	return state;
 }
