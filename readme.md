@@ -1,11 +1,14 @@
-# Quantum Mechanical Keyboard Firmware
+# My QMK keymaps
 
-[![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
-[![Build Status](https://travis-ci.org/qmk/qmk_firmware.svg?branch=master)](https://travis-ci.org/qmk/qmk_firmware)
-[![Discord](https://img.shields.io/discord/440868230475677696.svg)](https://discord.gg/Uq7gcHh)
-[![Docs Status](https://img.shields.io/badge/docs-ready-orange.svg)](https://docs.qmk.fm)
-[![GitHub contributors](https://img.shields.io/github/contributors/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/pulse/monthly)
-[![GitHub forks](https://img.shields.io/github/forks/qmk/qmk_firmware.svg?style=social&label=Fork)](https://github.com/qmk/qmk_firmware/)
+Modifications to date:
+- reverse left wheel direction for volume changes (they felt backwards to me, at least with the encoder I installed)
+- implement firmware functions for my [SincKeyboardControl](https://github.com/ionothanus/SincKeyboardControl) and [SincKeyboardControlMac](https://github.com/ionothanus/SincKeyboardControlMac) system tray/menu bar control applications
+
+I currently have a Keebio Sinc rev. 1 and I use VIA with it, so you'll find my customizations in the keyboards/keebio/sinc/keymaps/via_custom folder.
+
+-------------
+
+# Quantum Mechanical Keyboard Firmware
 
 This is a keyboard firmware based on the [tmk\_keyboard firmware](https://github.com/tmk/tmk_keyboard) with some useful features for Atmel AVR and ARM controllers, and more specifically, the [OLKB product line](https://olkb.com), the [ErgoDox EZ](https://ergodox-ez.com) keyboard, and the [Clueboard product line](https://clueboard.co).
 
